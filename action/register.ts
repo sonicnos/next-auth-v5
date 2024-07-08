@@ -3,41 +3,38 @@
 import * as z from "zod";
 import { db } from "@/lib/db";
 import { RegisterSchema } from "@/schemas/index";
-import bcrypt from "bcryptjs"
-import { getUserByEmail } from "@/data/user"
-import { generateVerificationToken } from "@/lib/token";
+import bcrypt from "bcryptjs";
+import { getUserByEmail } from "@/data/user";
+import { generateVerificationToken } from "@/lib/tokens";
 import { sendVerificationEmail } from "@/lib/mail";
 
 export const register = async (values: z.infer<typeof RegisterSchema>) => {
-    const validatedFields = RegisterSchema.safeParse(values);
+  const validatedFields = RegisterSchema.safeParse(values);
 
-    if (!validatedFields.success) {
-        return { error: "Invalid fields!" };
-    }
-    
-    const { email, password, name } = validatedFields.data;
-    const hashedPassword = await bcrypt.hash(password, 10);
+  if (!validatedFields.success) {
+    return { error: "Invalid fields!" };
+  }
 
-    const existingUser = await getUserByEmail(email);
+  const { email, password, name } = validatedFields.data;
+  const hashedPassword = await bcrypt.hash(password, 10);
 
-    if (existingUser) {
-        return { error: "Email already in use "}
-    }
+  const existingUser = await getUserByEmail(email);
 
-    await db.user.create({
-        data: {
-            name,
-            email,
-            password: hashedPassword,
-        },
-    })
+  if (existingUser) {
+    return { error: "Email already in use " };
+  }
 
-    const verificationToken = await generateVerificationToken(email)
-    
-    await sendVerificationEmail(
-        verificationToken.email, 
-        verificationToken.token,
-        );
+  await db.user.create({
+    data: {
+      name,
+      email,
+      password: hashedPassword,
+    },
+  });
 
-    return { success: "Confirmation mail sent" };
-}
+  const verificationToken = await generateVerificationToken(email);
+
+  await sendVerificationEmail(verificationToken.email, verificationToken.token);
+
+  return { success: "Confirmation mail sent" };
+};
