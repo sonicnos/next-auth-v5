@@ -1,10 +1,10 @@
 import NextAuth from "next-auth";
 import { UserRole } from "@prisma/client";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-
 import { db } from "./lib/db";
 import authConfig from "./auth.config";
 import { getUserById } from "./data/user";
+import { getTwoFactorConfirmationByUserId } from "./data/two-factor-confirmation";
 
 export const {
   handlers: { GET, POST },
@@ -14,7 +14,7 @@ export const {
 } = NextAuth({
   pages: {
     signIn: "/auth/login",
-    error: "auth/error",
+    error: "/auth/error",
   },
   events: {
     async linkAccount({ user }) {
@@ -31,10 +31,22 @@ export const {
       const existingUser = await getUserById(user.id);
 
       if (!existingUser?.emailVerified) return false;
+      if (existingUser.isTwoFactorEnable) {
+        const twoFactorConfirmation = await getTwoFactorConfirmationByUserId(
+          existingUser.id
+        );
+
+        if (!twoFactorConfirmation) return false;
+        // Delete two factor for next sign in
+        await db.twoFactorConfirmation.delete({
+          where: { id: twoFactorConfirmation.id },
+        });
+      }
       return true;
     },
 
     async session({ token, session }) {
+      console.log("token", token);
       if (token.sub && session.user) {
         session.user.id = token.sub;
       }
