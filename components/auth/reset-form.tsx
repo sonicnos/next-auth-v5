@@ -1,27 +1,27 @@
 "use client";
 
 import * as z from "zod";
-import { useTransition, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useState, useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { ResetSchema } from "@/schemas";
-import { Input } from "../ui/input";
+import { Input } from "@/components/ui/input";
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
+  FormMessage,  
 } from "@/components/ui/form";
-import { CardWrapper } from "./card-wrapper";
-import { Button } from "../ui/button";
-import { FormError } from "../form-error";
-import { FormSuccess } from "../form-success";
-import { reset } from "@/action/reset";
+import { CardWrapper } from "@/components/auth/card-wrapper"
+import { Button } from "@/components/ui/button";
+import { FormError } from "@/components/form-error";
+import { FormSuccess } from "@/components/form-success";
+import { reset } from "@/actions/reset";
 
-export const RestForm = () => {
+export const ResetForm = () => {
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
@@ -38,11 +38,11 @@ export const RestForm = () => {
     setSuccess("");
 
     startTransition(() => {
-      reset(values).then((data) => {
-        setError(data?.error);
-
-        setSuccess(data?.success);
-      });
+      reset(values)
+        .then((data) => {
+          setError(data?.error);
+          setSuccess(data?.success);
+        });
     });
   };
 
@@ -51,10 +51,12 @@ export const RestForm = () => {
       headerLabel="Forgot your password?"
       backButtonLabel="Back to login"
       backButtonHref="/auth/login"
-      showSocial
     >
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form 
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-6"
+        >
           <div className="space-y-4">
             <FormField
               control={form.control}
@@ -66,7 +68,7 @@ export const RestForm = () => {
                     <Input
                       {...field}
                       disabled={isPending}
-                      placeholder="jhon.doe@example.com"
+                      placeholder="john.doe@example.com"
                       type="email"
                     />
                   </FormControl>
@@ -77,7 +79,11 @@ export const RestForm = () => {
           </div>
           <FormError message={error} />
           <FormSuccess message={success} />
-          <Button type="submit" disabled={isPending} className="w-full">
+          <Button
+            disabled={isPending}
+            type="submit"
+            className="w-full"
+          >
             Send reset email
           </Button>
         </form>

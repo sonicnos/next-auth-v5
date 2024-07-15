@@ -1,7 +1,7 @@
 import { Poppins } from "next/font/google";
-import { cn } from "@/lib/utils"
-import Image from "next/image";
-import { Button } from "@/components/ui/button"
+
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import { LoginButton } from "@/components/auth/login-button";
 
 const font = Poppins({
@@ -11,17 +11,19 @@ const font = Poppins({
 
 export default function Home() {
   return (
-    <main className="flex h-full flex-col items-center justify-center bg-sky-500">
+    <main className="flex h-full flex-col items-center justify-center bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-sky-400 to-blue-800">
       <div className="space-y-6 text-center">
         <h1 className={cn(
-          "text-6xl font-semibold text-white drop-shadow-md", 
+          "text-6xl font-semibold text-white drop-shadow-md",
           font.className,
         )}>
-          Auth
+          🔐 Auth
         </h1>
-        <p className="text-white text-lg">A simple authentication service</p>
+        <p className="text-white text-lg">
+          A simple authentication service
+        </p>
         <div>
-          <LoginButton>
+          <LoginButton  asChild>
             <Button variant="secondary" size="lg">
               Sign in
             </Button>
@@ -29,5 +31,5 @@ export default function Home() {
         </div>
       </div>
     </main>
-  );
+  )
 }

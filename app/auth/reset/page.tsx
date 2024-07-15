@@ -1,7 +1,9 @@
-import { RestForm } from "@/components/auth/reset-form";
+import { ResetForm } from "@/components/auth/reset-form";
 
 const ResetPage = () => {
-  return <RestForm />;
-};
-
+  return ( 
+    <ResetForm />
+  );
+}
+ 
 export default ResetPage;
